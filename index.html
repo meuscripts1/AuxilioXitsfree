@@ -19,15 +19,11 @@
       overflow: hidden;
     }
 
-    #particles {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-    }
-
-    canvas {
-      display: block;
+    #tsparticles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: -1; /* garante que fique atrás */
     }
 
     .container {
@@ -87,8 +83,11 @@
       font-size: 1.35rem;
       letter-spacing: 2px;
       color: #d0d8ff;
-      display: none;
       user-select: all;
+    }
+
+    .placeholder {
+      color: #8888aa;
     }
 
     button {
@@ -115,7 +114,7 @@
 </head>
 <body>
 
-<div id="particles"></div>
+<div id="tsparticles"></div>
 
 <div class="container">
   <div class="painel">
@@ -125,8 +124,9 @@
       <img src="https://i.imgur.com/EKL8XfU.png" alt="foto do painel">
     </div>
 
-    <div class="key-box" id="keyReveal">
-      XitsFree1500
+    <div class="key-box" id="keyBox">
+      <span class="placeholder">Key aqui...</span>
+      <span id="keyReveal" style="display: none;">XitsFree1500</span>
     </div>
 
     <button onclick="revelarKey()">
@@ -135,45 +135,50 @@
   </div>
 </div>
 
-<!-- tsParticles -->
-<script src="https://cdn.jsdelivr.net/npm/@tsparticles/all@3.5.0/tsparticles.all.min.js"></script>
+<!-- tsParticles - versão slim mais estável -->
+<script src="https://cdn.jsdelivr.net/npm/@tsparticles/slim@3/tsparticles.slim.min.js"></script>
 <script>
-  tsParticles.load("particles", {
-    fullScreen: { enable: true },
-    fpsLimit: 90,
-    particles: {
-      number: { value: 60, density: { enable: true, value_area: 800 } },
-      color: { value: ["#8b5cf6", "#a78bfa", "#c084fc", "#7c3aed"] },
-      shape: { type: "circle" },
-      opacity: { value: 0.5, random: true, animation: { enable: true, speed: 1, minimumValue: 0.2 } },
-      size: { value: { min: 1, max: 4 }, random: true, animation: { enable: true, speed: 2 } },
-      move: {
-        enable: true,
-        speed: { min: 0.5, max: 1.6 },
-        direction: "none",
-        random: true,
-        straight: false,
-        outModes: { default: "out" },
-        attract: { enable: true, rotateX: 400, rotateY: 800 }
+  async function loadParticles() {
+    await tsParticles.load("tsparticles", {
+      fullScreen: { enable: true, zIndex: -1 },
+      fpsLimit: 120,
+      particles: {
+        number: { value: 80, density: { enable: true, value_area: 800 } }, // mais visíveis
+        color: { value: ["#8b5cf6", "#a78bfa", "#c084fc", "#7c3aed", "#d8b4fe"] },
+        shape: { type: "circle" },
+        opacity: { value: 0.7, random: true, animation: { enable: true, speed: 1.5, minimumValue: 0.3 } },
+        size: { value: { min: 1.5, max: 5 }, random: true, animation: { enable: true, speed: 3 } },
+        move: {
+          enable: true,
+          speed: { min: 0.8, max: 2.2 },
+          direction: "none",
+          random: true,
+          straight: false,
+          outModes: { default: "out" },
+          attract: { enable: true, rotateX: 600, rotateY: 1200 }
+        },
+        links: {
+          enable: true,
+          distance: 150,
+          color: "#a78bfa",
+          opacity: 0.6,
+          width: 1.5
+        }
       },
       interactivity: {
         detectsOn: "canvas",
         events: { onHover: { enable: true, mode: "grab" }, resize: true },
-        modes: { grab: { distance: 160, links: { opacity: 0.6 } } }
+        modes: { grab: { distance: 200, links: { opacity: 0.7 } } }
       },
-      links: {
-        enable: true,
-        distance: 130,
-        color: "#a78bfa",
-        opacity: 0.4,
-        width: 1
-      }
-    },
-    detectRetina: true
-  });
+      detectRetina: true
+    });
+  }
+
+  loadParticles();
 
   function revelarKey() {
-    document.getElementById("keyReveal").style.display = "block";
+    document.querySelector(".placeholder").style.display = "none";
+    document.getElementById("keyReveal").style.display = "inline";
   }
 </script>
 
